@@ -35,5 +35,12 @@ export const Wrapper = styled.div`
   align-items: center;
   //border: 1px solid red;
   
-  gap: 80px;
+  gap: 60px;
+  
+  h1{
+    text-align: left;
+    width: 300px;
+    font-weight: 600;
+    font-size: 32px;
+  }
 `

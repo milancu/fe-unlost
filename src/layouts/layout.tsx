@@ -13,9 +13,11 @@ const Layout: React.FC<LayoutProps> = ({children}) => {
 
     const showHeader = router.pathname !== "/file";
 
+    const header = router.pathname.includes("dashboard") ? "Dashboard" : router.pathname.includes("moje-slozky") ? "Moje složky" : router.pathname.includes("sdilene-slozky") ? "Sdílené složky" : "Ostatní"
+
     return (
         <StyledMainLayout>
-            {showHeader && <Header/>}
+            {showHeader && <Header header={header}/>}
             <div style={{display: "flex"}}>
                 {showHeader && <SideBar/>}
                 <main style={{flexGrow: 1, border: "1px solid red"}}>{children}</main>

@@ -5,14 +5,17 @@ import Image from "next/image";
 import SearchField from "@/components/molecules/SearchField/SearchField";
 import ImportButton from "@/components/atoms/Buttons/ImportButton";
 
-const Header = () => {
+interface HeaderProps {
+    header: string
+}
+
+const Header: React.FC<HeaderProps> = ({header}) => {
     return (
         <StyledHeader>
             <HeaderWrapper>
                 <Wrapper>
                     <Image src={archiveLogo} alt={'logo'}/>
-                    {/*TODO props*/}
-                    Dashboard
+                    <h1>{header}</h1>
                 </Wrapper>
                 <SearchField/>
                 <ImportButton/>

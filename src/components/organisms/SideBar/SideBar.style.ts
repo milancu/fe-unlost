@@ -6,6 +6,7 @@ export const StyledSideBar = styled.div`
   height: 460px;
   position: relative;
   left: -50px;
+  flex-shrink: 0;
 
   background: #27272F;
   border-radius: 20px;

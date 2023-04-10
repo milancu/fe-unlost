@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Link from "next/link";
 
 export const StyledWorkspace = styled.div`
-  width: 220px;
+  width: 260px;
   height: 180px;
 
   background: linear-gradient(188deg, #936BB3 -39.64%, #2351F4 94.24%);

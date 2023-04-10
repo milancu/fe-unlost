@@ -40,7 +40,7 @@ const SideBar = () => {
                 {links.map((link, index) => {
                     return (
                         <StyledLink key={index} href={link.link}
-                                    className={router.pathname === link.link ? "active" : ""}>
+                                    className={router.pathname.includes(link.link) ? "active" : ""}>
                             <Image src={link.icon} alt={'icon'}/>
                         </StyledLink>
                     )

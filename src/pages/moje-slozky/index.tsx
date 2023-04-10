@@ -1,8 +1,8 @@
-const MyFolders = ()=>{
-    return(
-        <div>
+import FolderLayout from "@/layouts/FolderLayout/FolderLayout";
 
-        </div>
+const MyFolders = () => {
+    return (
+        <FolderLayout/>
     )
 }
 
