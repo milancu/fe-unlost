@@ -41,7 +41,7 @@ const LastOpenedFiles = () => {
                     return (
                         <tr key={index}>
                             <th style={{textAlign: "left"}}>
-                                <Link href={"/"}  style={{display:"flex", alignItems:"center", gap: "1rem"}}>
+                                <Link href={"/soubor/1"}  style={{display:"flex", alignItems:"center", gap: "1rem"}}>
                                     <Image src={fileIcon} alt={'icon'}/>
                                     {file.filename}
                                 </Link>

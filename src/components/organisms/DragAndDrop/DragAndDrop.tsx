@@ -1,10 +1,20 @@
 import {StyledDragAndDrop} from "@/components/organisms/DragAndDrop/DragAndDrop.style";
-import React from "react";
+import React, {useState} from "react";
 import CircleLoadingProcess, {LoadingType} from "@/components/molecules/CircleLoadingProcess/CircleLoadingProcess";
 import uploadIcon from "@/static/svg/icons/uploadDragAndDrop.svg"
 import Image from "next/image";
+import UploadFileModal from "@/components/organisms/UploadFileModal/UploadFileModal";
+import client from "@/utils/ApolloClient";
+import {UPLOAD_FILES} from "@/graphql/types";
 
-const DragAndDrop = () => {
+interface DragAndDropProps {
+    data: any
+}
+
+const DragAndDrop: React.FC<DragAndDropProps> = ({data}) => {
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [files, setFiles] = useState<FileList>()
+    const [folder, setFolder] = useState()
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -13,14 +23,34 @@ const DragAndDrop = () => {
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         const files = event.dataTransfer.files;
-        console.log('Dropped files:', files);
-        // TODO
+        setFiles(files)
+        setIsModalOpen(true)
     };
 
     const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
         event.dataTransfer.setData('Files', 'true');
     };
 
+    const handleModal = () => {
+        setIsModalOpen(!isModalOpen)
+    }
+
+    const uploadFiles = () => {
+        console.log("Folder:" + " " + folder)
+        const variables = {
+            files: files,
+            folderId: folder
+        };
+
+        client.mutate({
+            mutation: UPLOAD_FILES,
+            variables: variables
+        }).then(() => {
+            handleModal()
+        }).catch(error => {
+            console.error("Error uploading files", error);
+        });
+    }
 
     return (
         <StyledDragAndDrop
@@ -29,9 +59,18 @@ const DragAndDrop = () => {
             onDragStart={handleDragStart}
             draggable
         >
+            {/*<input type={"file"} multiple onChange={event => console.log(event.target.files)}/>*/}
+            {isModalOpen &&
+                <UploadFileModal
+                    files={files!!}
+                    handleBack={() => handleModal()}
+                    upload={uploadFiles}
+                    handleFolderId={setFolder}/>}
             <div style={{display: "flex", justifyContent: "space-between"}}>
-                <CircleLoadingProcess type={LoadingType.UPLOADING} executing={17} sumFiles={20}/>
-                <CircleLoadingProcess type={LoadingType.EXTRACTING} executing={10} sumFiles={20}/>
+                <CircleLoadingProcess type={LoadingType.UPLOADING} executing={data.getSumOfUploadingFile}
+                                      sumFiles={data.getSumOfNewFile}/>
+                <CircleLoadingProcess type={LoadingType.EXTRACTING} executing={data.getSumOfExtractingFile}
+                                      sumFiles={data.getSumOfNewFile}/>
             </div>
             <div style={{
                 display: "flex",

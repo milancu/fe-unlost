@@ -1,25 +1,33 @@
 import {useRouter} from "next/router";
-import {useQuery} from "@apollo/client";
-import {GET_ALL_FILES, GET_USER} from "@/graphql/types";
+import {HttpLink, useQuery} from "@apollo/client";
+import {GET_USER} from "@/graphql/types";
+import client from "@/utils/ApolloClient";
 
 const Index = () => {
     const router = useRouter();
     const accessToken = router.query.AccessToken;
-    console.log(accessToken)
+
     if (accessToken != null) {
         if (typeof accessToken === "string") {
             localStorage.setItem("access_token", accessToken)
+
+            client.setLink(
+                new HttpLink({
+                    uri: 'http://localhost:8080/graphql',
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                })
+            );
         }
 
         const {data} = useQuery(GET_USER);
-        if (data != null) {
-            localStorage.setItem("name", data.getCurrentUser.lastname)
+        console.log(data)
+        if (data && data.getCurrentUser) {
+            localStorage.setItem("name", data.getCurrentUser.lastname + " " + data.getCurrentUser.firstname)
             localStorage.setItem("profileImg", data.getCurrentUser.imageUrl)
+            window.location.href = "/dashboard";
         }
-
-
-        window.location.href = "/";
-
     }
 }
 

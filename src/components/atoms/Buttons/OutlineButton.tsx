@@ -5,14 +5,15 @@ import React from "react";
 
 interface ButtonProps {
     text: string,
-    img: StaticImageData
+    img?: StaticImageData
+    onClick: ()=>void
 }
 
-const OutlineButton: React.FC<ButtonProps> = ({text, img}) => {
+const OutlineButton: React.FC<ButtonProps> = ({text, img, onClick}) => {
     return (
-        <StyledOutlineButton>
+        <StyledOutlineButton onClick={()=>onClick()}>
             {text}
-            <Image src={img} alt={'icon'}/>
+            {img && <Image src={img} alt={'icon'}/>}
         </StyledOutlineButton>
     )
 }

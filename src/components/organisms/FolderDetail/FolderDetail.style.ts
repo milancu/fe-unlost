@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Image from "next/image";
 
 export const StyledFolderDetail = styled.div`
   min-width: 450px;
@@ -29,13 +30,38 @@ export const ButtonWrapper = styled.div`
   justify-content: space-between;
 `
 
+export const StyledImage = styled(Image)`
+  height: auto;
+  object-fit: contain;
+  cursor: initial;
+  pointer-events: none;
+  user-select: none;
+  border-radius: 10px;
+`
+
 export const BottomContent = styled.div`
   flex: 1;
   overflow: auto;
+  
+  position: relative;
 
 `
 
 export const FolderSchemaWrapper = styled.div`
   height: 100%;
   margin-top: 1rem;
+`
+
+export const ProfileImgWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`
+
+export const ButtonAddLabelWrapper = styled.div`
+  display: flex;
+
+  button {
+    width: 100%;
+  }
 `

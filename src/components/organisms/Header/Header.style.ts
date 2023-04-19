@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const StyledHeader = styled.div`
-  border: 1px solid red;
   margin-bottom: 60px;
   width: 100%;
   height: 80px;
@@ -34,13 +33,18 @@ export const Wrapper = styled.div`
   display: flex;
   align-items: center;
   //border: 1px solid red;
-  
+
   gap: 60px;
-  
-  h1{
+
+  h1 {
     text-align: left;
-    width: 300px;
+    //width: 200px;
     font-weight: 600;
     font-size: 32px;
+  }
+
+  img {
+    position: relative;
+    left: -20px;
   }
 `

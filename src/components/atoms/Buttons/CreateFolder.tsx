@@ -1,9 +1,13 @@
 import {StyledButton} from "@/components/atoms/Buttons/Button.style";
 import React from "react";
 
-const CreateFolder = () => {
+interface CreateFolderProps {
+    handleModal: () => void
+}
+
+const CreateFolder: React.FC<CreateFolderProps> = ({handleModal}) => {
     return (
-        <StyledButton>
+        <StyledButton onClick={() => handleModal()}>
             Vytvořit novou složku
         </StyledButton>
     )

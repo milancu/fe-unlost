@@ -1,46 +1,47 @@
 import {StyledMyFolderLayout} from "@/layouts/FolderLayout/MyFolderLayout.style";
 import Folder from "@/components/molecules/Folder/Folder";
 import {ButtonWrapper, FolderWrapper} from "@/components/molecules/Folder/Folder.style";
-import React from "react";
+import React, {useState} from "react";
 import FolderDetail from "@/components/organisms/FolderDetail/FolderDetail";
 import CreateFolder from "@/components/atoms/Buttons/CreateFolder";
 import {useRouter} from "next/router";
+import CreateFolderModal from "@/components/organisms/Modal/CreateFolder";
 
 const folders = [
     {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     },
     {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     },
     {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     }, {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     }, {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     }, {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     },
     {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     },
     {
-        link: "/files",
+        link: "/soubory",
         name: "Smlouvy",
         color: "#36A9DA"
     },
@@ -48,26 +49,40 @@ const folders = [
 
 ]
 
-const FolderLayout = () => {
+interface FolderProps {
+    data: any
+}
 
+const FolderLayout: React.FC<FolderProps> = ({data}) => {
     const router = useRouter()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const handleModal = () => {
+        setIsModalOpen(!isModalOpen)
+    }
+
+    const [selectedFolder, setSelected] = useState(data && data[0])
+
+    const handleClickFolder = (index:number) => {
+        setSelected(data[index])
+    }
 
     return (
         <StyledMyFolderLayout>
+            {isModalOpen && <CreateFolderModal onClick={() => handleModal()}/>}
             <div>
                 <ButtonWrapper>
-                    <CreateFolder/>
+                    <CreateFolder handleModal={() => handleModal()}/>
                 </ButtonWrapper>
                 <FolderWrapper>
-                    {folders.map((folder, index) => {
+                    {data && data.map((folder: any, index: number) => {
                         return (
-                            <Folder link={router.pathname + folder.link} name={folder.name} color={folder.color}
-                                    key={index}/>
+                            <Folder link={router.pathname + "/soubory/" + folder.id} name={folder.name} key={index} onSelect={handleClickFolder} index={index}/>
                         )
                     })}
                 </FolderWrapper>
             </div>
-            <FolderDetail/>
+            <FolderDetail selectedFolder={selectedFolder}/>
         </StyledMyFolderLayout>
     )
 }

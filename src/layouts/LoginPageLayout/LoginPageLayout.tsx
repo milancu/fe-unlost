@@ -6,6 +6,7 @@ import GoogleLoginButton from "@/components/atoms/Buttons/GoogleLoginButton";
 const LoginPageLayout = () => {
 
     const handleLogin = () => {
+        localStorage.clear()
         window.location.href = "http://localhost:8080/oauth2/authorization/google"
     }
 
