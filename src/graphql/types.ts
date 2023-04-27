@@ -223,6 +223,40 @@ export const UPDATE_SCHEMA = gql`
     }
 `
 
+export const GET_FILES = gql`
+    query getFiles($ids:[String]){
+        getDocuments(ids:$ids){
+            id
+            filename
+            imgLink
+            folderId
+            createAt
+            createByUser
+            annotatedData{
+                key
+                value
+            }
+        }
+    }
+`
+
+export const GET_OTHER_FILE = gql`
+    query getOtherFiles{
+        getAllOtherDocument{
+            id
+            filename
+            imgLink
+            folderId
+            createAt
+            createByUser
+            annotatedData{
+                key
+                value
+            }
+        }
+    }
+`
+
 export interface Document {
     id: String
     filename: String,

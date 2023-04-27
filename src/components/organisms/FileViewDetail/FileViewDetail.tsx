@@ -46,9 +46,6 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
         data: dataUpdate
     }] = useMutation(UPDATE_ANNOTATION);
 
-    console.log(values);
-
-
     const handleInputChange = (index: number, value: string) => {
         const newValues = [...values];
         newValues[index] = value;
@@ -79,7 +76,6 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
                 const nextInput = inputs[inputIndex].current;
                 nextInput?.focus();
             }
-            updateData()
         };
 
         document.addEventListener('click', handleClick, true);
@@ -91,6 +87,7 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
 
     useEffect(() => {
         if (text != "") {
+            console.log(text)
             const newValues = [...values];
             newValues[inputIndex] = text;
             setValues(newValues);
@@ -124,7 +121,7 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
                 <InputWrapper>
                     {labels.map((l: any, index: number) => {
                         return (
-                            <StyledLabel key={index}>
+                            <StyledLabel key={l.id}>
                                 {l.name}
                                 <StyledInput
                                     type={"text"}

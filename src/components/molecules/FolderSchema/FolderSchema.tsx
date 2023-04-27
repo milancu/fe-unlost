@@ -7,9 +7,9 @@ import Image from "next/image";
 
 interface FolderSchema {
     label: any
-    onChange: (id: number, name: string) => void
+    onChange: (id: string, name: string) => void
     onSave: () => void
-    onDelete: (id: number) => void
+    onDelete: (id: string) => void
 }
 
 const FolderSchema: React.FC<FolderSchema> = ({label, onChange, onSave, onDelete}) => {
@@ -18,7 +18,7 @@ const FolderSchema: React.FC<FolderSchema> = ({label, onChange, onSave, onDelete
     const [deleteConfirmed, setDeleteConfirmed] = useState(false);
     const [value, setValue] = useState(label.name)
 
-    const handleDeleteLabel = (id: number) => {
+    const handleDeleteLabel = (id: string) => {
         if (deleteConfirmed) {
             onDelete(id)
             setDeleteConfirmed(false);

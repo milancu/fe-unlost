@@ -18,6 +18,7 @@ const Files = () => {
     if (filesLoading || folderLoading) return <p>Loading...</p>;
     if (filesError || folderError) return <p> Error :(</p>;
 
+
     return (
         <FilesLayout dataFiles={filesData.getAllDocumentInFolder} dataFolder={folderData.getFolder}/>
     )

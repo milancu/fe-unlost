@@ -5,7 +5,7 @@ export const StyledMainLayout = styled.div`
   position: relative;
   width: 90%;
   min-width: 300px;
-  max-width: 1800px;
+  max-width: 1400px;
   margin-inline: auto;
 
   //border: 1px solid red;

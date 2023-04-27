@@ -12,11 +12,13 @@ import Image from "next/image";
 import AddUser from "@/components/atoms/Buttons/AddUser";
 import React, {useEffect, useState} from "react";
 import DeleteButton from "@/components/atoms/Buttons/DeleteButton";
-import FolderSchema from "@/components/molecules/FolderSchema/FolderSchema";
 import {useMutation, useQuery} from "@apollo/client";
 import {GET_SCHEMA, GET_USER_BY_ID, SHARE_FOLDER, UPDATE_SCHEMA} from "@/graphql/types";
 import client from "@/utils/ApolloClient";
 import PrimaryButton from "@/components/atoms/Buttons/PrimaryButton";
+import FolderSchema from "@/components/molecules/FolderSchema/FolderSchema";
+import {v4 as uuidv4, parse} from 'uuid';
+
 
 interface Folder {
     selectedFolder: any
@@ -85,6 +87,9 @@ const FolderDetail: React.FC<Folder> = ({selectedFolder}) => {
                     return obj;
                 }, {});
             });
+            labels.forEach((l:any)=>{
+                l.id = uuidv4()
+            })
             setLabels(labels)
         }
     }, [schemaData])
@@ -99,34 +104,33 @@ const FolderDetail: React.FC<Folder> = ({selectedFolder}) => {
     }
 
     const handleAddLabel = () => {
-        setLabels([...labels, {id: labels.length, name: ""}])
+        setLabels([...labels, {id: uuidv4(), name: ""}])
     }
 
-    const handleChangeValue = (id: number, name: string) => {
+    const handleChangeValue = (id: string, name: string) => {
         setLabels((prevLabels: any) =>
             prevLabels.map((label: any) =>
                 label.id === id ? {...label, name} : label)
         );
     }
 
-    const handleOnDelete = (id: number) => {
+    const handleOnDelete = (id: string) => {
         const newLabels = labels.filter((label: any) => label.id !== id);
         setLabels(newLabels);
+        console.log(newLabels)
     }
 
     const updateLabels = async () => {
         try {
-            const {data} = await updateSchemaMutation({variables: {schema: labels, folderId: selectedFolder.id}});
-            console.log(data);
+            updateSchemaMutation({variables: {schema: labels, folderId: selectedFolder.id}});
         } catch (e) {
             console.error(e);
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         updateLabels()
-    },[labels])
-
+    }, [labels])
 
     if (loading || imgProfiles.length == 0 || schemaLoading) return <p>Loading...</p>;
     if (error || schemaError) return <p> Error :(</p>;
@@ -173,7 +177,7 @@ const FolderDetail: React.FC<Folder> = ({selectedFolder}) => {
                 <FolderSchemaWrapper>
                     {labels.map((l: any, index: number) => {
                         return (
-                            <FolderSchema label={l} key={index} onChange={handleChangeValue} onDelete={handleOnDelete}
+                            <FolderSchema label={l} key={l.id} onChange={handleChangeValue} onDelete={handleOnDelete}
                                           onSave={updateLabels}/>
                         )
                     })}

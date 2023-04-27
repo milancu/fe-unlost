@@ -17,7 +17,7 @@ import DeleteButton from "@/components/atoms/Buttons/DeleteButton";
 import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
 import {useQuery} from "@apollo/client";
-import {GET_FOLDER_SCHEMA} from "@/graphql/types";
+import {GET_FILE, GET_FOLDER, GET_FOLDER_SCHEMA} from "@/graphql/types";
 import FileViewDetail from "@/components/organisms/FileViewDetail/FileViewDetail";
 
 interface FileLayoutProps {
@@ -73,7 +73,6 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
     const router = useRouter()
     const file = data.getDocument
 
-
     const {
         loading: schemaLoading,
         error: schemaError,
@@ -81,6 +80,17 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
     } = useQuery(GET_FOLDER_SCHEMA, {
         variables: {id: file.folderId},
     });
+
+    const {
+        loading: folderLoading,
+        error: folderError,
+        data: folderData,
+    } = useQuery(GET_FOLDER, {
+        variables: {id: file.folderId},
+    });
+
+    const {loading, error, data: fileData} = useQuery(GET_FILE, {variables: {id: file.id}});
+
 
     useEffect(() => {
 
@@ -161,7 +171,11 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
         }
     }
 
-    if (labels.length == 0) {
+    const handleReloadAndGoBack = () => {
+        router.back();
+    };
+
+    if (labels.length == 0 || loading || folderLoading) {
         return <div>Loading...</div>
     }
 
@@ -169,11 +183,9 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
         <StyledFileLayout>
             <Header>
                 <LeftContentWrapper>
-                    <StyledImageLink src={backArrow} alt={'icon'} onClick={() => {
-                        router.back()
-                    }}/>
+                    {/*<StyledImageLink src={backArrow} alt={'icon'} onClick={handleReloadAndGoBack}/>*/}
                     <h1>
-                        Moje složky/faktury
+                        Moje složky/{folderData.getFolder.name}
                     </h1>
                 </LeftContentWrapper>
                 <ButtonWrapper>
@@ -183,7 +195,7 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
                 </ButtonWrapper>
             </Header>
             <ContentWrapper>
-                <FileViewDetail labels={labels} file={file} text={annotatedText}/>
+                <FileViewDetail labels={labels} file={fileData.getDocument} text={annotatedText}/>
                 <ImageWrapper>
                     <AnnotateLayer id={"svg"}
                                    onMouseDown={(e) => {

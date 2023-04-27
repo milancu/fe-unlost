@@ -3,28 +3,22 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import fileIcon from "@/static/svg/icons/file.svg"
-
-const files = [
-    {
-        filename: "Pracovní smlouva",
-        lastModifiedDate: "23.02.2023"
-    },
-    {
-        filename: "Pracovní smlouva",
-        lastModifiedDate: "23.02.2023"
-    },
-    {
-        filename: "Pracovní smlouva",
-        lastModifiedDate: "23.02.2023"
-    },
-    {
-        filename: "Pracovní smlouva",
-        lastModifiedDate: "23.02.2023"
-    },
-]
+import {useQuery} from "@apollo/client";
+import {GET_FILE, GET_FILES} from "@/graphql/types";
+import {Simulate} from "react-dom/test-utils";
+import load = Simulate.load;
+import {formatDate} from "@/utils/DateFormatter";
 
 
 const LastOpenedFiles = () => {
+
+    let x = localStorage.getItem("lastOpenedFiles")
+    const ids = JSON.parse(x!!);
+    const {loading, error, data} = useQuery(GET_FILES, {variables: {ids: ids}})
+
+    if (loading) {
+        return <div>Loading...</div>
+    }
 
     return (
         <StyledLastOpenedFiles>
@@ -33,20 +27,20 @@ const LastOpenedFiles = () => {
                 <thead>
                 <tr>
                     <th style={{textAlign: "left"}}>Název souboru</th>
-                    <th style={{textAlign: "right"}}>Datum poslední změny</th>
+                    <th style={{textAlign: "right"}}>Datum vytvoření</th>
                 </tr>
                 </thead>
                 <tbody>
-                {files.map((file, index) => {
+                {data.getDocuments.map((file: any, index: number) => {
                     return (
                         <tr key={index}>
                             <th style={{textAlign: "left"}}>
-                                <Link href={"/soubor/1"}  style={{display:"flex", alignItems:"center", gap: "1rem"}}>
+                                <Link href={`/soubor/${file.id}`} style={{display: "flex", alignItems: "center", gap: "1rem"}}>
                                     <Image src={fileIcon} alt={'icon'}/>
                                     {file.filename}
                                 </Link>
                             </th>
-                            <th style={{textAlign: "right"}}>{file.lastModifiedDate}</th>
+                            <th style={{textAlign: "right"}}>{formatDate(file.createAt)}</th>
                         </tr>
                     )
                 })}

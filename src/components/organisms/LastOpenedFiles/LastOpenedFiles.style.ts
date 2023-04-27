@@ -7,11 +7,16 @@ export const StyledLastOpenedFiles = styled.div`
     font-weight: 500;
     font-size: 20px;
   }
+
+  max-height: 450px;
+  overflow: auto;
 `
 
 export const FilesTable = styled.table`
   width: 100%;
   height: 100%;
+  max-height: 380px;
+  overflow: auto;
   margin-top: 2rem;
   background: #27272F;
   backdrop-filter: blur(20px);
