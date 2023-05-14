@@ -29,6 +29,48 @@ export const LeftContentWrapper = styled.div`
   }
 `
 
+export const StyledInput  = styled.input`
+  height: 45px;
+  width: 300px;
+  border-radius: 17px;
+  padding: 1rem;
+  font-size: 15px;
+  border: none;
+  outline: 2px solid #4D5BDC;
+  background: #27272e;
+`
+
+export const AddButton = styled.button`
+  min-width: 120px;
+  height: 50px;
+
+  padding: 0 10px;
+
+
+  border: 2px solid #4D5BDC;
+  border-radius: 20px;
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 22px;
+  color: #CED3FF;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 1rem;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease-in, background 0.2s ease-in;
+
+  &:hover {
+    color: white;
+    background: rgba(107, 119, 229, 0.15);
+  }
+`
+
 export const StyledImageLink = styled(Image)`
   cursor: pointer;
 

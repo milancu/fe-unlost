@@ -31,7 +31,7 @@ const LastOpenedFiles = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {data.getDocuments.map((file: any, index: number) => {
+                {data?.getDocuments.map((file: any, index: number) => {
                     return (
                         <tr key={index}>
                             <th style={{textAlign: "left"}}>

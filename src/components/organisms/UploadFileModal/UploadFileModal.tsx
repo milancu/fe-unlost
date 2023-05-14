@@ -19,7 +19,7 @@ interface Props {
     files: FileList
     handleBack: () => void
     upload: () => void
-    handleFolderId: (id: any) => void
+    handleFolderId: (id: string) => void
 }
 
 const UploadFileModal: React.FC<Props> = ({files, handleBack, handleFolderId, upload}) => {
@@ -54,7 +54,7 @@ const UploadFileModal: React.FC<Props> = ({files, handleBack, handleFolderId, up
                         Vyberte do jaké složky nahrát soubory
                     </h3>
                     <StyledSelect id="folders" name="folders" value={selectedFolder}
-                                  onChange={e => handleSelect(e.target.value)}>
+                                  onChange={e => handleFolderId(e.target.value)}>
                         <StyledOption>Vyberte složku</StyledOption>
                         {folders.map((f: any, index: number) => {
                             return (

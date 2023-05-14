@@ -22,18 +22,18 @@ const AddUser: React.FC<AddUserProps> = ({onClick, onChange}) => {
     }
 
     return (
-        <div style={{position: "relative"}}>
+        <div>
             <StyledOutlineButton onClick={handleClick}>
                 <Image src={addUser} alt={'icon'}/>
                 Přidat uživatele
             </StyledOutlineButton>
             {addUserClick &&
-                <InputWrapper>
+                <div>
                     <StyledInputAddUser placeholder={"user@email.cz"} onChange={e=>onChange(e.target.value)}/>
                     <ButtonWrapper>
                         <PrimaryButton text={"Přidat"} onClick={onClick}/>
                     </ButtonWrapper>
-                </InputWrapper>
+                </div>
             }
         </div>
 

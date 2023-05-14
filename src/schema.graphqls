@@ -1,0 +1,150 @@
+type CustomSchema{
+    id:UUID!
+    labels:[String]!
+}
+
+type Document{
+    id: UUID!
+    filename:String!,
+    storageFilename:String!,
+    createAt:Instant!,
+    createByUser:UUID!,
+    customAnnotations:[Annotation]!,
+    annotatedData:[AttributeKeyValuePair]!,
+    allTextDescription:String!,
+    documentStatus:DocumentStatus!,
+    imgLink:String!,
+    lockByUser:UUID!,
+    deleted:Boolean!,
+    isLocked:Boolean!,
+    folderId:UUID
+}
+
+type AttributeKeyValuePair {
+    key: String
+    value: String
+}
+
+input AttributeKeyValuePairInput {
+    key: String
+    value: String
+}
+
+type Annotation{
+    description:String!,
+    x: Int!
+    y: Int!
+    width: Int!
+    height: Int!
+}
+
+enum DocumentStatus{
+    UPLOADING,
+    EXTRACTING,
+    READY,
+    ERROR
+}
+
+type DocumentAccess{
+    id:UUID!
+    documentId:UUID!
+    userId:UUID!
+}
+
+type Folder{
+    id:UUID!
+    name:String!
+    deleted:Boolean!
+    createBy:UUID!
+    createAt:Instant!
+    documentIds:[UUID]
+    folderAccesses:[FolderAccess]
+    folderType:FolderAccessType,
+    customSchemaId:UUID
+}
+
+type FolderAccess{
+    id:UUID!
+    folderId:UUID!
+    userId:UUID!
+    accessType:FolderAccessType
+}
+
+enum FolderAccessType{
+    OWNER
+    SHARED
+}
+
+type ShareLink{
+    id:UUID!
+    link:String!
+    lifetime:Instant!
+    documentId:UUID!
+    createBy:UUID!
+    createAt:Instant
+}
+
+type User{
+    id: String!
+    firstname:String!,
+    lastname:String!,
+    email:String!,
+    deleted:Boolean!,
+    imageUrl:String!
+}
+
+scalar Upload
+
+type Mutation {
+    createUser:Boolean
+
+    #FILE
+    uploadImage(files:[Upload], folderId:String):Boolean
+    updateAnnotation(annotations:[AttributeKeyValuePairInput]!, documentId:UUID):Boolean
+    deleteDocument(documentId:UUID):Boolean
+    renameDocument(documentId:UUID, newFilename: String):Document
+    lockDocument(documentId:UUID):Document
+    unlockDocument(documentId:UUID):Document
+    addDocumentAccess(documentId:UUID, email:String):Document
+
+    #FOLDER
+    createFolder(name:String!, labels:[String]):Folder
+    addUser(email:String!, folderId:UUID!):Folder
+    removeFolderAccess(folderId:UUID, userId:UUID):Boolean
+    deleteFolder(folderId:UUID):Boolean
+
+    #SCHEMA
+    updateSchema(schema:[String], folderId:UUID):Folder
+}
+
+scalar UUID
+scalar Instant
+
+type Query{
+    #USER
+    getCurrentUser:User!
+    getUser(id:UUID):User!
+
+    #DOCUMENT
+    getDocument(id:String):Document
+    getAllDocument:[Document]
+    getAllDocumentInFolder(folderId:UUID):[Document]
+    getSumOfUploadingFile:Int
+    getSumOfExtractingFile:Int
+    getSumOfNewFile:Int
+    searchFileByText(text:String):[Document]
+    getDocuments(ids:[String]):[Document]
+    getAllOtherDocument:[Document]
+
+    #FOLDER
+    getAllFolder:[Folder]
+    getAllSharedFolder:[Folder]
+    getAllOwnedFolder:[Folder]
+    getFolder(id:UUID):Folder
+    getFolderSchema(id:UUID):CustomSchema
+    searchFolderByName(name:String):[Folder]
+
+    #SCHEMA
+    getSchema(id:UUID):CustomSchema
+    getShareLink(documentId:UUID):ShareLink
+}

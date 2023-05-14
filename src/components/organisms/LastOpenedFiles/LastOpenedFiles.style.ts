@@ -14,8 +14,7 @@ export const StyledLastOpenedFiles = styled.div`
 
 export const FilesTable = styled.table`
   width: 100%;
-  height: 100%;
-  max-height: 380px;
+  height: 380px;
   overflow: auto;
   margin-top: 2rem;
   background: #27272F;

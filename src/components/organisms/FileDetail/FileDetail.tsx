@@ -2,13 +2,16 @@ import {Row, StyledFileDetail} from "@/components/organisms/FileDetail/FileDetai
 import OutlineButton from "@/components/atoms/Buttons/OutlineButton";
 import addUser from "@/static/svg/icons/addUser.svg";
 import link from "@/static/svg/icons/link.svg";
-import {ButtonWrapper, StyledImage} from "@/components/organisms/FolderDetail/FolderDetail.style";
+import {ButtonWrapper, StyledImage, StyledInput} from "@/components/organisms/FolderDetail/FolderDetail.style";
 import DeleteButton from "@/components/atoms/Buttons/DeleteButton";
-import React from "react";
+import React, {useState} from "react";
 import Image from "next/image";
 import {useQuery} from "@apollo/client";
 import {GET_FOLDER, GET_USER_BY_ID} from "@/graphql/types";
 import {formatDate} from "@/utils/DateFormatter";
+import {useAddDocumentAccessMutation, useDeleteFileMutation, useGetShareLinkQuery} from "@/generated/graphql";
+import {enqueueSnackbar} from "notistack";
+import {router} from "next/client";
 
 interface FileDetailProps {
     selectedFile: any
@@ -20,14 +23,69 @@ const FileDetail: React.FC<FileDetailProps> = ({selectedFile}) => {
         loading: folderLoading,
         error: folderError,
         data: folderData
-    } = useQuery(GET_FOLDER, {variables: {id: selectedFile.folderId}});
+    } = useQuery(GET_FOLDER, {variables: {id: selectedFile?.folderId}});
 
     const {loading: userLoading, error, data} = useQuery(GET_USER_BY_ID, {
-        variables: {id: selectedFile.createByUser},
+        variables: {id: selectedFile?.createByUser},
     });
 
-    if (userLoading || folderLoading) return <div>Loading...</div>
-    if (error || folderError) return <div>Error :(</div>
+    const {data: shareLink} = useGetShareLinkQuery({variables: {documentId: selectedFile?.id}})
+    const [addUserAccess, setAddUser] = useState(false)
+
+    const [addDocumentAccessMutation, {
+        data: addDocumentAccessData,
+    }] = useAddDocumentAccessMutation();
+    const [email, setEmail] = useState("")
+
+    const [deleteDocumentMutation] = useDeleteFileMutation()
+
+
+    const copyLink = () => {
+        console.log()
+        enqueueSnackbar('Zkopírováno do schránky', {variant: "success"})
+        if (shareLink) {
+            //TODO
+            // @ts-ignore
+            navigator.clipboard.writeText(shareLink.getShareLink.link)
+        }
+    }
+
+    const handleAddDocument = () => {
+        setAddUser(!addUserAccess)
+    }
+
+    const addDocumentAccess = () => {
+        setAddUser(!addUserAccess)
+
+        addDocumentAccessMutation({
+            variables: {
+                documentId: selectedFile.id,
+                email: email,
+            },
+        }).then(r => enqueueSnackbar('Dokument úspěšně sdílen', {variant: "success"})).catch(
+            e => {
+                enqueueSnackbar('Error', {variant: "error"})
+            }
+        );
+    }
+
+    const deleteFile = () => {
+        deleteDocumentMutation({
+            variables: {
+                documentId: selectedFile.id,
+            }
+        }).then(r => {
+            enqueueSnackbar('Dokument byl smazán', {variant: "success"})
+            window.location.reload()
+        }).catch(
+            e => {
+                enqueueSnackbar('Error', {variant: "error"})
+            }
+        );
+    }
+
+    if (userLoading || folderLoading) return <StyledFileDetail>Loading...</StyledFileDetail>
+    if (error || folderError) return <StyledFileDetail>No files</StyledFileDetail>
 
     return (
         <StyledFileDetail>
@@ -54,18 +112,28 @@ const FileDetail: React.FC<FileDetailProps> = ({selectedFile}) => {
                 </Row>
             </div>
             <ButtonWrapper>
-                <OutlineButton text={"Sdílet dokument"} img={addUser} onClick={() => console.log("TODO")}/>
-                <OutlineButton text={"Dočasný odkaz"} img={link} onClick={() => console.log("TODO")}/>
+                {addUserAccess ?
+                    <OutlineButton text={"Potvrdit"} img={addUser} onClick={() => addDocumentAccess()}/>
+                    :
+                    <OutlineButton text={"Sdílet dokument"} img={addUser} onClick={() => handleAddDocument()}/>
+
+                }
+                <OutlineButton text={"Dočasný odkaz"} img={link} onClick={() => copyLink()}/>
             </ButtonWrapper>
-            <div style={{textAlign: "center", height: "300px", overflow:"auto", marginTop:"20px"}}>
-                <StyledImage src={selectedFile.imgLink} alt={'image'} width={250} height={300}/>
+            {addUserAccess &&
+                <StyledInput type={"email"} placeholder={"Email uživatele"} value={email}
+                             onChange={e => setEmail(e.target.value)}/>
+            }
+            <div style={{textAlign: "center", height: "300px", overflow: "auto", marginTop: "20px"}}>
+                {selectedFile.imgLink ?
+                    <StyledImage src={selectedFile.imgLink} alt={'image'} width={250} height={300}/> : ""}
             </div>
             <div style={{
                 display: "flex",
                 justifyContent: "end",
                 marginTop: "3rem"
             }}>
-                <DeleteButton text={"Odstranit soubor"}/>
+                <DeleteButton text={"Odstranit soubor"} onDeleteClick={deleteFile}/>
             </div>
         </StyledFileDetail>
     )

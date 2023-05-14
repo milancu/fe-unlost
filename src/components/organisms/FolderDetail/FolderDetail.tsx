@@ -18,6 +18,8 @@ import client from "@/utils/ApolloClient";
 import PrimaryButton from "@/components/atoms/Buttons/PrimaryButton";
 import FolderSchema from "@/components/molecules/FolderSchema/FolderSchema";
 import {v4 as uuidv4, parse} from 'uuid';
+import {enqueueSnackbar} from "notistack";
+import {useDeleteFolderMutation} from "@/generated/graphql";
 
 
 interface Folder {
@@ -38,6 +40,7 @@ const FolderDetail: React.FC<Folder> = ({selectedFolder}) => {
     const [imgProfiles, setImgProfiles] = useState<any>([])
     const [email, setEmail] = useState<String>("")
     const [labels, setLabels] = useState<any>([])
+    const [deleteFolderMutation] = useDeleteFolderMutation()
 
 
     const [addUserMutation, {
@@ -128,11 +131,26 @@ const FolderDetail: React.FC<Folder> = ({selectedFolder}) => {
         }
     }
 
+    const handleDelete = ()=>{
+        deleteFolderMutation({
+            variables: {
+                folderId: selectedFolder.id,
+            }
+        }).then(r => {
+            enqueueSnackbar('Složka byla smazána', {variant: "success"})
+            window.location.reload()
+        }).catch(
+            e => {
+                enqueueSnackbar('Error', {variant: "error"})
+            }
+        );
+    }
+
     useEffect(() => {
         updateLabels()
     }, [labels])
 
-    if (loading || imgProfiles.length == 0 || schemaLoading) return <p>Loading...</p>;
+    if (loading || schemaLoading) return <p>Loading...</p>;
     if (error || schemaError) return <p> Error :(</p>;
 
     return (
@@ -167,7 +185,7 @@ const FolderDetail: React.FC<Folder> = ({selectedFolder}) => {
                 </Row>
                 <ButtonWrapper>
                     <AddUser onClick={addUser} onChange={setEmail}/>
-                    <DeleteButton text={"Odstranit složku"}/>
+                    <DeleteButton text={"Odstranit složku"} onDeleteClick={handleDelete}/>
                 </ButtonWrapper>
 
             </TopContent>

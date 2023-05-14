@@ -1,7 +1,7 @@
 import {
-    BottomContentWrapper, Header, InputWrapper,
+    BottomContentWrapper, ButtonWrapper, Header, InputWrapper,
     Row,
-    StyledFileViewDetail, StyledInput, StyledLabel,
+    StyledFileViewDetail, StyledInput, StyledLabel, StyledSaveButton,
     TopContentWrapper
 } from "@/components/organisms/FileViewDetail/FileViewDetail.style";
 import SecondaryButton from "@/components/atoms/Buttons/SecondaryButton";
@@ -11,6 +11,7 @@ import {useMutation, useQuery} from "@apollo/client";
 import {GET_USER_BY_ID, UPDATE_ANNOTATION} from "@/graphql/types";
 import Image from "next/image";
 import debounce from 'lodash.debounce';
+import {useSnackbar} from "notistack";
 
 interface FileViewDetailProps {
     file: any,
@@ -22,6 +23,7 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
     const {loading, error, data} = useQuery(GET_USER_BY_ID, {
         variables: {id: file.createByUser},
     });
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
 
 
     const initialValues = labels.reduce((acc: any, curr: any, index: number) => {
@@ -50,7 +52,7 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
         const newValues = [...values];
         newValues[index] = value;
         setValues(newValues);
-        debouncedUpdateData();
+        // debouncedUpdateData();
     };
 
     const updateData = () => {
@@ -58,32 +60,39 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
         const annotations = Object.entries(result).map(([key, value]) => ({key, value}));
 
         updateAnnotation({variables: {annotations, documentId: file.id}})
-            .then(r => console.log(r))
+            .then(r => enqueueSnackbar('Uloženo', {variant: "success"}))
             .catch(e => console.error(e));
     };
 
     const debouncedUpdateData = debounce(updateData, 500);
 
 
-    useEffect(() => {
-        const handleClick = (event: MouseEvent) => {
-            const inputs = inputRefs.current;
-            const currentInput = inputs.find((input: any) => input.current?.contains(event.target as Node));
-
-            if (!currentInput) {
-                inputs[inputIndex].current?.focus();
-            } else {
-                const nextInput = inputs[inputIndex].current;
-                nextInput?.focus();
-            }
-        };
-
-        document.addEventListener('click', handleClick, true);
-
-        return () => {
-            document.removeEventListener('click', handleClick, true);
-        };
-    }, [inputIndex]);
+    // useEffect(() => {
+    //
+    //     const addUserInput = document.getElementById('addUserInput');
+    //     const isFocused = (document.activeElement === addUserInput);
+    //
+    //     const handleClick = (event: MouseEvent) => {
+    //         if (!isFocused) {
+    //             const inputs = inputRefs.current;
+    //             const currentInput = inputs.find((input: any) => input.current?.contains(event.target as Node));
+    //
+    //             if (!currentInput) {
+    //                 inputs[inputIndex].current?.focus();
+    //             } else {
+    //                 const nextInput = inputs[inputIndex].current;
+    //                 nextInput?.focus();
+    //             }
+    //         }
+    //     };
+    //
+    //
+    //     document.addEventListener('click', handleClick, true);
+    //
+    //     return () => {
+    //         document.removeEventListener('click', handleClick, true);
+    //     };
+    // }, [inputIndex]);
 
     useEffect(() => {
         if (text != "") {
@@ -94,9 +103,13 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
         }
     }, [text])
 
-    useEffect(() => {
-        debouncedUpdateData();
-    }, [values]);
+    // useEffect(() => {
+    //     debouncedUpdateData();
+    // }, [values]);
+
+    const handleSave = () => {
+        updateData()
+    }
 
 
     if (loading) return <div>Loading...</div>
@@ -137,6 +150,9 @@ const FileViewDetail: React.FC<FileViewDetailProps> = ({file, labels, text}) => 
                     })}
                 </InputWrapper>
             </BottomContentWrapper>
+            <ButtonWrapper>
+                <StyledSaveButton onClick={() => handleSave()}>Uložit</StyledSaveButton>
+            </ButtonWrapper>
         </StyledFileViewDetail>
     )
 }

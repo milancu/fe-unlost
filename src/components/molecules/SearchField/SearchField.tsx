@@ -29,45 +29,45 @@ const SearchField = () => {
 
     const debouncedUpdateData = debounce(refetch, 500);
 
-    useEffect(() => {
-        debouncedUpdateData()
-        if (data && value != "") {
-            const files = data.searchFileByText;
-            const folders = data.searchFolderByName;
-            const updatedFiles: any = [];
-            const updatedFolders: any = [];
-
-            setFiles([])
-            data.searchFileByText.map((f: any) => f.folderId).forEach((l: any, index: number) => {
-                fetchFolder({id: l}).then(r => {
-                    const updatedFile = {
-                        ...files[index],
-                        folderName: r.data.getFolder.name,
-                    };
-                    updatedFiles.push(updatedFile);
-
-                    if (updatedFiles.length === files.length) {
-                        setFiles(updatedFiles);
-                    }
-                });
-            });
-
-            setFolders([])
-            data.searchFolderByName.map((f: any) => f.id).forEach((i: any, index: number) => {
-                fetchFolder({id: i}).then(r => {
-                    const updatedFolder = {
-                        ...folders[index],
-                        link: r.data.getFolder.folderType == "OWNER" ? "/moje-slozky/soubory" : "/sdilene-slozky/soubory",
-                    };
-                    updatedFolders.push(updatedFolder);
-
-                    if (updatedFolders.length === folders.length) {
-                        setFolders(updatedFolders);
-                    }
-                });
-            })
-        }
-    }, [value])
+    // useEffect(() => {
+    //     debouncedUpdateData()
+    //     if (data && value != "") {
+    //         const files = data.searchFileByText;
+    //         const folders = data.searchFolderByName;
+    //         const updatedFiles: any = [];
+    //         const updatedFolders: any = [];
+    //
+    //         setFiles([])
+    //         data.searchFileByText.map((f: any) => f.folderId).forEach((l: any, index: number) => {
+    //             fetchFolder({id: l}).then(r => {
+    //                 const updatedFile = {
+    //                     ...files[index],
+    //                     folderName: r.data.getFolder.name,
+    //                 };
+    //                 updatedFiles.push(updatedFile);
+    //
+    //                 if (updatedFiles.length === files.length) {
+    //                     setFiles(updatedFiles);
+    //                 }
+    //             });
+    //         });
+    //
+    //         setFolders([])
+    //         data.searchFolderByName.map((f: any) => f.id).forEach((i: any, index: number) => {
+    //             fetchFolder({id: i}).then(r => {
+    //                 const updatedFolder = {
+    //                     ...folders[index],
+    //                     link: r.data.getFolder.folderType == "OWNER" ? "/moje-slozky/soubory" : "/sdilene-slozky/soubory",
+    //                 };
+    //                 updatedFolders.push(updatedFolder);
+    //
+    //                 if (updatedFolders.length === folders.length) {
+    //                     setFolders(updatedFolders);
+    //                 }
+    //             });
+    //         })
+    //     }
+    // }, [value])
 
     return (
         <StyledField>

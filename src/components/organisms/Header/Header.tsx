@@ -7,6 +7,7 @@ import ImportButton from "@/components/atoms/Buttons/ImportButton";
 import UploadFileModal from "@/components/organisms/UploadFileModal/UploadFileModal";
 import client from "@/utils/ApolloClient";
 import {UPLOAD_FILES} from "@/graphql/types";
+import {useSnackbar} from "notistack";
 
 interface HeaderProps {
     header: string
@@ -22,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({header}) => {
     const [files, setFile] = useState<FileList>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [folder, setFolder] = useState<string>("")
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
 
 
     const handleFiled = (files: FileList) => {
@@ -33,19 +35,30 @@ const Header: React.FC<HeaderProps> = ({header}) => {
         setIsModalOpen(!isModalOpen)
     }
 
+    const handleFolder = (folder: string) => {
+        console.log(folder)
+        setFolder(folder)
+    }
+
     const uploadFiles = () => {
         const variables = {
             files: files,
-            folderId: folder
+            folderId: folder.toString()
         };
+
+        console.log(folder.toString())
+        console.log(files)
 
         client.mutate({
             mutation: UPLOAD_FILES,
             variables: variables
         }).then(() => {
             handleModal()
+            enqueueSnackbar("Soubor úspěšně nahrán", {variant: "success"})
         }).catch(error => {
             console.error("Error uploading files", error);
+            handleModal()
+            enqueueSnackbar(error, {variant: "error"})
         });
     }
 
@@ -56,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({header}) => {
                     files={files!!}
                     handleBack={() => handleModal()}
                     upload={() => uploadFiles()}
-                    handleFolderId={setFolder}/>}
+                    handleFolderId={handleFolder}/>}
             <StyledHeader>
                 <HeaderWrapper>
                     <Wrapper>

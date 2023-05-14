@@ -1,4 +1,5 @@
 import {
+    AddButton,
     AnnotateLayer,
     ButtonWrapper,
     ContentWrapper,
@@ -6,19 +7,20 @@ import {
     ImageWrapper,
     LeftContentWrapper,
     StyledFileLayout,
-    StyledImage,
-    StyledImageLink
+    StyledImage, StyledImageLink, StyledInput
 } from "@/layouts/FileLayout/FileLayout.style";
-import backArrow from "@/static/svg/icons/backArrow.svg"
 import addUser from "@/static/svg/icons/addUser.svg"
+import backArrow from "@/static/svg/icons/backArrow.svg"
 import link from "@/static/svg/icons/link.svg"
 import OutlineButton from "@/components/atoms/Buttons/OutlineButton";
 import DeleteButton from "@/components/atoms/Buttons/DeleteButton";
 import {useRouter} from "next/router";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useQuery} from "@apollo/client";
 import {GET_FILE, GET_FOLDER, GET_FOLDER_SCHEMA} from "@/graphql/types";
 import FileViewDetail from "@/components/organisms/FileViewDetail/FileViewDetail";
+import {useAddDocumentAccessMutation, useDeleteFileMutation, useGetShareLinkQuery} from "@/generated/graphql";
+import {useSnackbar} from "notistack";
 
 interface FileLayoutProps {
     data: any
@@ -68,9 +70,14 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
 
+    const [addUserAccess, setAddUser] = useState(false)
+
     const [annotatedText, setAnnotatedText] = useState("")
 
     const router = useRouter()
+
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+
     const file = data.getDocument
 
     const {
@@ -89,8 +96,19 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
         variables: {id: file.folderId},
     });
 
-    const {loading, error, data: fileData} = useQuery(GET_FILE, {variables: {id: file.id}});
+    const inputRef = useRef<HTMLInputElement>(null)
 
+    const {loading, error, data: fileData} = useQuery(GET_FILE, {variables: {id: file.id}});
+    const {data: shareLink} = useGetShareLinkQuery({variables: {documentId: file.id}})
+
+    const [addDocumentAccessMutation, {
+        data: addDocumentAccessData,
+    }] = useAddDocumentAccessMutation();
+
+    const [deleteDocumentMutation] = useDeleteFileMutation()
+
+
+    const [email, setEmail] = useState("")
 
     useEffect(() => {
 
@@ -175,23 +193,82 @@ const FileLayout: React.FC<FileLayoutProps> = ({data}) => {
         router.back();
     };
 
+
+    const copyLink = () => {
+        console.log()
+        enqueueSnackbar('Zkopírováno do schránky', {variant: "success"})
+        if (shareLink) {
+            //TODO
+            // @ts-ignore
+            navigator.clipboard.writeText(shareLink.getShareLink.link)
+        }
+    }
+
     if (labels.length == 0 || loading || folderLoading) {
         return <div>Loading...</div>
+    }
+
+
+    const handleAddDocument = () => {
+        setAddUser(!addUserAccess)
+        inputRef.current?.focus()
+    }
+
+    const addDocumentAccess = () => {
+        setAddUser(!addUserAccess)
+        console.log(email)
+
+        addDocumentAccessMutation({
+            variables: {
+                documentId: file.id,
+                email: email,
+            },
+        }).then(r => enqueueSnackbar('Uživatel úspěšně přidán', {variant: "success"})).catch(
+            e => {
+                enqueueSnackbar('Error', {variant: "error"})
+            }
+        );
+    }
+
+    const deleteFile = () => {
+        deleteDocumentMutation({
+            variables: {
+                documentId: file.id,
+            }
+        }).then(r => {
+            enqueueSnackbar('Dokument byl smazán', {variant: "success"})
+            window.location.reload()
+        }).catch(
+            e => {
+                enqueueSnackbar('Error', {variant: "error"})
+            }
+        );
     }
 
     return (
         <StyledFileLayout>
             <Header>
                 <LeftContentWrapper>
-                    {/*<StyledImageLink src={backArrow} alt={'icon'} onClick={handleReloadAndGoBack}/>*/}
+                    <StyledImageLink src={backArrow} alt={'icon'} onClick={handleReloadAndGoBack}/>
                     <h1>
-                        Moje složky/{folderData.getFolder.name}
+                        {folderData.getFolder.name}
                     </h1>
                 </LeftContentWrapper>
                 <ButtonWrapper>
-                    <OutlineButton text={"Sdílet dokument"} img={addUser} onClick={() => console.log("TODO")}/>
-                    <OutlineButton text={"Dočasný odkaz"} img={link} onClick={() => console.log("TODO")}/>
-                    <DeleteButton text={"Odstranit soubor"}/>
+                    {addUserAccess
+                        ? <div style={{
+                            display: "flex",
+                            gap: "10px",
+                            alignItems: "center"
+                        }}>
+                            <StyledInput type={"email"} placeholder={"Zadejte email uživatele"} id={"addUserInput"}
+                                         ref={inputRef} value={email} onChange={e => setEmail(e.target.value)}/>
+                            <AddButton onClick={() => addDocumentAccess()}>Přidat</AddButton>
+                        </div>
+                        : <OutlineButton text={"Sdílet dokument"} img={addUser} onClick={() => handleAddDocument()}/>
+                    }
+                    <OutlineButton text={"Dočasný odkaz"} img={link} onClick={() => copyLink()}/>
+                    <DeleteButton text={"Odstranit soubor"} onDeleteClick={deleteFile}/>
                 </ButtonWrapper>
             </Header>
             <ContentWrapper>

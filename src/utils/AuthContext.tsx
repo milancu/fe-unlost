@@ -1,6 +1,7 @@
 import React, {ReactElement, ReactNode, useEffect} from "react";
 import {useRouter} from "next/router";
 import axios from "axios";
+import {cookies} from "next/headers";
 
 interface AuthContextProps {
     children: ReactNode

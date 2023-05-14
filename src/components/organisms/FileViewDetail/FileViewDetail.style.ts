@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const StyledFileViewDetail = styled.div`
   width: 100%;
+  position: relative;
   
   display: flex;
   flex-direction: column;
@@ -22,6 +23,43 @@ export const Row = styled.div`
 
   p:first-child {
     color: #B9B9B9;
+  }
+`
+
+export const ButtonWrapper = styled.div`
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+`
+
+export const StyledSaveButton = styled.button`
+  width: 100%;
+  min-width: 180px;
+  height: 50px;
+
+  padding: 0 1rem;
+
+  background: #4D5BDC;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 22px;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease-in;
+
+  &:hover {
+    background: #3b4be0;
   }
 `
 

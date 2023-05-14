@@ -30,6 +30,20 @@ export const ButtonWrapper = styled.div`
   justify-content: space-between;
 `
 
+export const StyledInput = styled.input`
+  margin-top: 20px;
+  outline: 2px solid #4D5BDC;
+  border: none;
+  background: transparent;
+  border-radius: 20px;
+
+  font-weight: 500;
+  font-size: 14px;
+  width: 400px;
+
+  padding: 1rem;
+`
+
 export const StyledImage = styled(Image)`
   height: auto;
   object-fit: contain;

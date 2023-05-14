@@ -6,6 +6,7 @@ import {ApolloProvider} from "@apollo/client";
 import client from "@/utils/ApolloClient";
 import Layout from "@/layouts/layout";
 import localFont from "@next/font/local";
+import {SnackbarProvider} from "notistack";
 
 
 const poppins = localFont({
@@ -41,12 +42,13 @@ const poppins = localFont({
 export default function App({Component, pageProps}: AppProps) {
     return (
         <AuthContext>
-            <ApolloProvider client={client}>
-                <Layout>
-                    <Component {...pageProps} className={poppins.className}/>
-                </Layout>
-            </ApolloProvider>
+            <SnackbarProvider>
+                <ApolloProvider client={client}>
+                    <Layout>
+                        <Component {...pageProps} className={poppins.className}/>
+                    </Layout>
+                </ApolloProvider>
+            </SnackbarProvider>
         </AuthContext>
     )
-
 }

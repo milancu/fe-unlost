@@ -2,7 +2,7 @@ import {gql} from '@apollo/client';
 import {StaticImageData} from "next/image";
 
 export const GET_USER = gql`
-    query getUser {
+    query getCurrentUser {
         getCurrentUser {
             lastname,
             firstname,
@@ -71,7 +71,7 @@ export const GET_ALL_FOLDER = gql`
             deleted
             createBy
             customSchemaId
-            
+
         }
         getAllSharedFolder {
             id
@@ -85,7 +85,7 @@ export const GET_ALL_FOLDER = gql`
 `
 
 export const GET_ALL_OWNED_FOLDER = gql`
-    query GetAllFolder {
+    query GetAllFOwnedFolder {
         getAllOwnedFolder {
             id
             name
@@ -101,7 +101,7 @@ export const GET_ALL_OWNED_FOLDER = gql`
 `
 
 export const GET_ALL_SHARED_FOLDER = gql`
-    query GetAllFolder {
+    query GetAllSharedFolder {
         getAllSharedFolder {
             id
             name
@@ -141,7 +141,7 @@ export const UPLOAD_FILES=gql`
 `
 
 export const ALL_FILES_IN_FOLDER = gql`
-    query GetAllDocument($id: UUID!) {
+    query GetAllDocumentInFolder($id: UUID!) {
         getAllDocumentInFolder(folderId: $id) {
             filename
             id
@@ -150,6 +150,10 @@ export const ALL_FILES_IN_FOLDER = gql`
             createAt
             folderId
             isLocked
+            annotatedData{
+                key
+                value
+            }
         }
     }
 `
@@ -223,8 +227,17 @@ export const UPDATE_SCHEMA = gql`
     }
 `
 
+export const ADD_DOCUMENT_ACCESS = gql`
+    mutation AddDocumentAccess($documentId: UUID, $email:String){
+        addDocumentAccess(documentId:$documentId, email:$email){
+            id
+            filename
+        }
+    }
+`
+
 export const GET_FILES = gql`
-    query getFiles($ids:[String]){
+    query getFilesByID($ids:[String]){
         getDocuments(ids:$ids){
             id
             filename
@@ -254,6 +267,27 @@ export const GET_OTHER_FILE = gql`
                 value
             }
         }
+    }
+`
+
+export const CREATE_SHARE_LINK = gql`
+    query GetShareLink($documentId:UUID){
+        getShareLink(documentId: $documentId){
+            link
+        }
+    }
+`
+
+
+export const DELETE_FILE = gql`
+    mutation DeleteFile($documentId:UUID){
+        deleteDocument(documentId:$documentId)
+    }
+`
+
+export const DELETE_FOLDER = gql`
+    mutation DeleteFolder($folderId:UUID){
+        deleteFolder(folderId:$folderId)
     }
 `
 

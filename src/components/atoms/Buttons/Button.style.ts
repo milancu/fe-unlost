@@ -74,10 +74,11 @@ export const StyledInput = styled.input`
 `
 
 export const StyledInputAddUser = styled.input`
-  position: absolute;
-  bottom: -70px;
-  width: 100%;
+  //position: absolute;
+  //bottom: -70px;
+  //width: 100%;
   height: 50px;
+  margin-top: 10px;
   border-radius: 20px;
   padding: 1rem;
   font-size: 15px;
@@ -89,13 +90,14 @@ export const StyledInputAddUser = styled.input`
 export const InputWrapper = styled.div`
     position: relative;
   //border: 1px solid red;
-  width: 215%;
+  //width: 215%;
 `
 
 export const ButtonWrapper = styled.div`
-  position: absolute;
-  right: 0;
-  bottom: -70px;
+  //position: absolute;
+  //right: 0;
+  //bottom: -70px;
+  margin-top: 10px;
 `
 
 export const StyledOutlineButton = styled.button`

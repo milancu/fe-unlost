@@ -6,6 +6,7 @@ import Image from "next/image";
 import UploadFileModal from "@/components/organisms/UploadFileModal/UploadFileModal";
 import client from "@/utils/ApolloClient";
 import {UPLOAD_FILES} from "@/graphql/types";
+import {enqueueSnackbar} from "notistack";
 
 interface DragAndDropProps {
     data: any
@@ -14,11 +15,15 @@ interface DragAndDropProps {
 const DragAndDrop: React.FC<DragAndDropProps> = ({data}) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [files, setFiles] = useState<FileList>()
-    const [folder, setFolder] = useState()
+    const [folder, setFolder] = useState("")
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
     };
+
+    const handleFolder = (id: string) => {
+        setFolder(id)
+    }
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -47,8 +52,11 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({data}) => {
             variables: variables
         }).then(() => {
             handleModal()
+            enqueueSnackbar("Soubor úspěšně nahrán", {variant: "success"})
         }).catch(error => {
             console.error("Error uploading files", error);
+            handleModal()
+            enqueueSnackbar(error, {variant: "error"})
         });
     }
 
@@ -57,15 +65,14 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({data}) => {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onDragStart={handleDragStart}
-            draggable
+            // draggable
         >
-            {/*<input type={"file"} multiple onChange={event => console.log(event.target.files)}/>*/}
             {isModalOpen &&
                 <UploadFileModal
                     files={files!!}
                     handleBack={() => handleModal()}
                     upload={uploadFiles}
-                    handleFolderId={setFolder}/>}
+                    handleFolderId={handleFolder}/>}
             <div style={{display: "flex", justifyContent: "space-between"}}>
                 <CircleLoadingProcess type={LoadingType.UPLOADING} executing={data.getSumOfUploadingFile}
                                       sumFiles={data.getSumOfNewFile}/>

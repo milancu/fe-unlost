@@ -1,15 +1,24 @@
 import {OutlineRedButton} from "@/components/atoms/Buttons/Button.style";
-import React from "react";
+import React, {useState} from "react";
 
 interface DeleteButtonProps {
     text: string
-    //TODO void
+    onDeleteClick: () => void
 }
 
-const DeleteButton: React.FC<DeleteButtonProps> = ({text}) => {
+const DeleteButton: React.FC<DeleteButtonProps> = ({text, onDeleteClick}) => {
+    const [confirm, setConfirm] = useState(false)
+
+    const handleClick = () => {
+        if (confirm) {
+            onDeleteClick()
+        }
+        setConfirm(!confirm)
+    }
+
     return (
-        <OutlineRedButton>
-            {text}
+        <OutlineRedButton onClick={() => handleClick()}>
+            {confirm ? "Potvrdit" : text}
         </OutlineRedButton>
     )
 }

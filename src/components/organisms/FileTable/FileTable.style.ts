@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+export const TableWrapper = styled.div`
+  max-width: 100%;
+  overflow-x: auto;
+`
+
 export const StyledFileTable = styled.table`
   //border: 1px solid red;
   width: 100%;
@@ -29,10 +34,17 @@ export const StyledFileTable = styled.table`
 
   th, td {
     padding: 2rem;
+    text-overflow: ellipsis;
   }
 
   th {
-    text-align: left;
+    //text-align: left;
+
+  
+
+    min-width: 100px;
+    max-height: 10px;
+    text-overflow: ellipsis;
 
     &:first-child {
       border-radius: 30px 0 0 30px;
@@ -52,7 +64,19 @@ export const StyledFileTable = styled.table`
         border-radius: 30px;
         border-bottom: none;
       }
+
+
+      th {
+        &:not(:first-child) {
+          color: #d5d5d5;
+          font-weight: 500;
+        }
+      }
     }
+    //max-height: 300px;
+    //padding: 1rem;
+    //overflow: hidden; 
+    //display: block;
   }
 
   tr:first-child {
@@ -68,6 +92,8 @@ export const StyledFileTable = styled.table`
 export const Wrapper = styled.div`
   width: min(900px, 100%);
   margin-inline: auto;
+  height: 100%;
+  overflow: auto;
 `
 
 export const StyledCheckBox = styled.input`
