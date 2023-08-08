@@ -22,4 +22,4 @@ npm install
 npm run dev
 ```
 
-Aplikace je momentálně pozastavena, protože byly vyčerpány kredity na Google Cloudu.
+**Aplikace je momentálně pozastavena, protože byly vyčerpány kredity na Google Cloudu.**
