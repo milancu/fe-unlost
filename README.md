@@ -1,6 +1,6 @@
 # **Figma** -[ https://www.figma.com/unlost](https://www.figma.com/file/Uohn8ZntVDPF4CdvcE5tu0/unlost?type=design&node-id=0%3A1&mode=design&t=FCMwjQktwqUZVHfj-1)
 
-# Název Projektu
+# Unlost - FE
 
 Tento projekt je klasický frontend postavený na frameworku Next.js. Projekt slouží k vývoji frontendu pro Bakalářskou práci.
 Aplikace pro správu dokumentace s využitím OCR pro vyčítání textu
